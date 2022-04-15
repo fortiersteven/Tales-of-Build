@@ -16,33 +16,21 @@ jobs:
   startVM:
     runs-on: ubuntu-latest
     steps:
-    
-    #Test again
-    - name: Login to AZ CLI
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-    
-    - run:
-          az vm start -g ${{ secrets.AZURE_RESSOURCE }} -n ${{ secrets.AZURE_VM }}
+
+    - name: Start AWS EC2
+    # Run AWS Command on the GitHub Hosted runner which starts the instance using AWS authentication stored in GitHub Secrets (see below how to add)
+      run: |
+        aws ec2 start-instances --instance-ids ${{secrets.AWS_EC2_INSTANCE_ID }}
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
 
   pythonCode:
     runs-on: self-hosted
     needs: startVM
     steps:
     
-    - name: Checkout PythonLib
-      uses: actions/checkout@v3
-        
-
-    - name: Checkout TOR Repo
-      uses: actions/checkout@v3
-      with:
-        repository: SymphoniaLauren/Tales-of-Rebirth
-        path: ${{env.base_directory}}
-      
-    
-
     - name: Generate New SLPS
       working-directory: ${{env.base_directory}}
       run: 
@@ -52,12 +40,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: pythonCode
     steps:
-
-    - name: Login to AZ CLI
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
     
-    - run:
-          az vm stop -g ${{ secrets.AZURE_RESSOURCE }} -n ${{ secrets.AZURE_VM }}
- 
+
+    - name: Stop AWS EC2
+    # Run AWS Command on the GitHub Hosted runner which starts the instance using AWS authentication stored in GitHub Secrets (see below how to add)
+      run: |
+        aws ec2 stop-instances --instance-ids ${{secrets.AWS_EC2_INSTANCE_ID }}
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
