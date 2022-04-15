@@ -18,13 +18,12 @@ jobs:
     steps: 
 
     - name: Start AWS EC2
-    # Run AWS Command on the GitHub Hosted runner which starts the instance using AWS authentication stored in GitHub Secrets (see below how to add)
-      run: |
-        aws ec2 start-instances --instance-ids ${{secrets.AWS_EC2_INSTANCE_ID }}
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+
+      uses: flyweightrocks/aws-ec2-action@v1
+      with:
+        # Instance ID
+        instance-id: i-0baafef4a0fc9c235
+
 
   pythonCode:
     runs-on: self-hosted
