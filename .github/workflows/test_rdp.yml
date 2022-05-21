@@ -1,0 +1,19 @@
+name: Test RDP
+
+on:
+ workflow_dispatch
+
+env:
+  base_directory: c:/actions-runner/_work/PythonLib
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  startVM:
+    runs-on: windows-latest
+    steps:
+    
+  
+      - name: Start RDP
+        
+        run: |
+          print "allo"
